@@ -3,8 +3,6 @@ import type { StaticHandlerContext } from 'react-router-dom/server';
 import { describe, it } from 'vitest';
 import buildRouterState from '@helpers/build-router-state';
 
-const dataScript = '<script async>window.__staticRouterHydrationData = ';
-
 describe('buildRouterState', () => {
   it('should build router state with valid context', () => {
     const context = {
@@ -14,30 +12,19 @@ describe('buildRouterState', () => {
     } as unknown as StaticHandlerContext;
 
     const result = buildRouterState(context);
-    const expectedJson = JSON.stringify({
-      loaderData: context.loaderData,
-      actionData: context.actionData,
-      errors: { 0: 'Test error' },
-    });
 
-    expect(result).to.include(dataScript);
-    expect(result).to.include(expectedJson);
-    expect(result).to.include('</script>');
+    expect(result).to.equal(
+      '<script async>window.__staticRouterHydrationData = JSON.parse("{\\"loaderData\\":{\\"someData\\":\\"loaderData\\"},\\"actionData\\":{\\"action\\":\\"data\\"},\\"errors\\":{\\"0\\":\\"Test error\\"}}");</script>',
+    );
   });
 
   it('should build router state with empty context', () => {
     const context = {} as unknown as StaticHandlerContext;
-
     const result = buildRouterState(context);
-    const expectedJson = JSON.stringify({
-      loaderData: undefined,
-      actionData: undefined,
-      errors: null,
-    });
 
-    expect(result).to.include(dataScript);
-    expect(result).to.include(expectedJson);
-    expect(result).to.include('</script>');
+    expect(result).to.equal(
+      '<script async>window.__staticRouterHydrationData = JSON.parse("{\\"errors\\":null}");</script>',
+    );
   });
 
   it('should build router state with no errors', () => {
@@ -47,14 +34,9 @@ describe('buildRouterState', () => {
     } as unknown as StaticHandlerContext;
 
     const result = buildRouterState(context);
-    const expectedJson = JSON.stringify({
-      loaderData: context.loaderData,
-      actionData: context.actionData,
-      errors: null,
-    });
 
-    expect(result).to.include(dataScript);
-    expect(result).to.include(expectedJson);
-    expect(result).to.include('</script>');
+    expect(result).to.equal(
+      '<script async>window.__staticRouterHydrationData = JSON.parse("{\\"loaderData\\":{\\"someData\\":\\"loaderData\\"},\\"actionData\\":{\\"action\\":\\"data\\"},\\"errors\\":null}");</script>',
+    );
   });
 });
