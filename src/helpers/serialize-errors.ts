@@ -4,6 +4,7 @@ import type { StaticHandlerContext } from 'react-router-dom/server';
 /**
  * Serialize react router errors
  * @see https://github.com/remix-run/react-router/blob/main/packages/react-router-dom/server.tsx#LL166C1-L188C2
+ * https://github.com/remix-run/react-router/blob/main/LICENSE.md
  */
 function serializeErrors(errors: StaticHandlerContext['errors']): StaticHandlerContext['errors'] {
   if (!errors) {

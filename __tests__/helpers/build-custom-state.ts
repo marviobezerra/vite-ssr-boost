@@ -23,8 +23,9 @@ describe('buildCustomState', () => {
 
     const result = buildCustomState(initState);
 
-    expect(result).to.include('<script async>window.key1 = {"prop1":"value1"}</script>');
-    expect(result).to.include('<script async>window.key2 = {"prop2":"value2"}</script>');
+    expect(result).to.equal(
+      '<script async>window.key1 = JSON.parse("{\\"prop1\\":\\"value1\\"}");</script><script async>window.key2 = JSON.parse("{\\"prop2\\":\\"value2\\"}");</script>',
+    );
   });
 
   it('should handle undefined, null, or empty string values in initState', () => {
@@ -50,8 +51,8 @@ describe('buildCustomState', () => {
 
     const result = buildCustomState(initState as unknown as Record<string, Record<string, any>>);
 
-    expect(result).to.include('<script async>window.key1 = {"prop1":"value1"}</script>');
-    expect(result).to.not.include('<script async>window.key2 =');
-    expect(result).to.include('<script async>window.key3 = {"prop3":"value3"}</script>');
+    expect(result).to.equal(
+      '<script async>window.key1 = JSON.parse("{\\"prop1\\":\\"value1\\"}");</script><script async>window.key3 = JSON.parse("{\\"prop3\\":\\"value3\\"}");</script>',
+    );
   });
 });

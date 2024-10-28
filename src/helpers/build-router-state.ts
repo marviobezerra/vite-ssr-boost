@@ -1,4 +1,5 @@
 import type { StaticHandlerContext } from 'react-router-dom/server';
+import htmlEscape from '@helpers/html-escape';
 import serializeErrors from '@helpers/serialize-errors';
 
 /**
@@ -11,9 +12,9 @@ function buildRouterState(context: StaticHandlerContext): string {
     actionData,
     errors: serializeErrors(errors),
   };
-  const json = JSON.stringify(routerState);
+  const json = htmlEscape(JSON.stringify(JSON.stringify(routerState)));
 
-  return `<script async>window.__staticRouterHydrationData = ${json};</script>`;
+  return `<script async>window.__staticRouterHydrationData = JSON.parse(${json});</script>`;
 }
 
 export default buildRouterState;

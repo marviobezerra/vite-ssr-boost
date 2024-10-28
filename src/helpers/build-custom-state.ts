@@ -1,3 +1,4 @@
+import htmlEscape from '@helpers/html-escape';
 import type { IRenderOptions } from '@node/render';
 
 /**
@@ -9,7 +10,9 @@ function buildCustomState(initState?: ReturnType<NonNullable<IRenderOptions['get
       return '';
     }
 
-    return `<script async>window.${key} = ${JSON.stringify(state)}</script>`;
+    const json = htmlEscape(JSON.stringify(JSON.stringify(state)));
+
+    return `<script async>window.${key} = JSON.parse(${json});</script>`;
   });
 
   return stateScripts.join('').trim();
