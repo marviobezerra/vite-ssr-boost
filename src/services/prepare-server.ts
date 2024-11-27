@@ -176,11 +176,9 @@ class PrepareServer {
       // Apply Vite HTML transforms. This injects the Vite HMR client,
       // and also applies HTML transforms from Vite plugins, e.g. global
       // preambles from @vitejs/plugin-react
-      modifiedHtml = (
-        await this.config.getVite()!.transformIndexHtml(req.originalUrl, this.html, indexFile)
-      )
-        // Make vite script 'async'
-        .replace(/(<script.+)(>[\s\S]+injectIntoGlobalHook.+)/, '$1async$2');
+      modifiedHtml = await this.config
+        .getVite()!
+        .transformIndexHtml(req.originalUrl, this.html, indexFile);
     }
 
     return modifiedHtml.split('<!--ssr-outlet-->') as [string, string];
