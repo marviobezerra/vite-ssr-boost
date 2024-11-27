@@ -35,6 +35,7 @@
 - [Useful imports](#useful-imports)
 - [CLI](#cli)
 - [Warning](#warning)
+- [Use Cases](#use-cases)
 - [Bugs and feature requests](#bugs-and-feature-requests)
 - [License](#license)
 
@@ -92,9 +93,22 @@ import routes from './routes';
 
 void entryClient(App, routes, {
   /**
-   * Client configuration (optional)
+   * (optional). Client configuration 
    */
-  init: () => {}
+  init: () => {},
+  /**
+   * (optional). Configure router options
+   * @see createBrowserRouter second arg
+   */
+  routerOptions: {},
+  /**
+   * (optional). Customization create router function, e.g. use from sentry one
+   */
+  createRouter: createBrowserRouter,
+  /**
+   * (optional). Change root id
+   */
+  rootId: 'root',
 });
 ```
 
@@ -123,6 +137,10 @@ export default entryServer(App, routes, {
      */
     onServerCreated: () => {},
     /**
+     * (optional). Called once after express server started.
+     */
+    onServerStarted: () => {},
+    /**
      * (optional). Called on each incoming request.
      * E.g. configure request state, create state manager etc.
      */
@@ -143,11 +161,43 @@ export default entryServer(App, routes, {
      */
     onResponse: () => {},
     /**
+     * (optional). Stream error callback. Catch stream errors.
+     */
+    onError: () => {},
+    /**
      * (optional). Called when application shell or all html (depends on stream option) is ready to send on client.
      * E.g. here you can send any context or state to client.
      */
     getState: () => {},
   }),
+  /**
+   * (optional). Customize production log handler
+   * @see @lomray/vite-ssr-boost/services/logger
+   */
+  loggerProd: new Logger(),
+  /**
+   * (optional). Customize development log handler
+   * @see @lomray/vite-ssr-boost/services/logger
+   */
+  loggerDev: new Logger(),
+  /**
+   * (optional). Configure pre-builded middlewares
+   */
+  middlewares: {
+    /**
+     * @see CompressionOptions from 'compression' package
+     */
+    compression: {},
+    /**
+     * @see ServeStaticOptions from 'serve-static' package
+     */
+    expressStatic: {},
+  },
+  /**
+   * (optional). Configure static handler options
+   * @see createStaticHandler second arg
+   */
+  staticHandlerOpts: {},
 });
 ```
 
@@ -198,6 +248,19 @@ SsrBoost({
    * Add tsconfig aliases to vite config aliases
    */
   tsconfigAliases: true, // default: true
+  /**
+   * Path contains routes declaration files (need to detect route files).
+   */
+  routesPath: undefined, //default: undefined
+  /**
+   * Create additional SPA entrypoint: index-spa.html
+   * Can be used for service worker: createHandlerBoundToURL("index-spa.html")
+   */
+  spaIndex: false, // default: false
+  /**
+   * Additional entry points for build
+   */
+  entrypoint: [], // default: undefined
 })
 ```
 
@@ -268,6 +331,62 @@ const routes: RouteObject[] = [
   }
 ];
 ```
+## Use Cases
+
+### Change basename
+```typescript jsx
+/**
+ * Configure client
+ */
+void entryClient(App, routes, {
+  routerOptions: {
+    basename: '/custom',
+  },
+});
+```
+```typescript jsx
+/**
+ * Configure server
+ */
+export default entryServer(App, routes, {
+  staticHandlerOpts: {
+    basename: '/custom',
+  },
+});
+```
+
+### [Capacitor](https://capacitorjs.com/) additional endpoint
+```typescript
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    SsrBoost({
+      entrypoint: [
+        {
+          name: 'mobile',
+          type: 'spa',
+          clientFile: './src/mobile.tsx',
+          buildOptions: '--mode mobile',
+        },
+      ],
+    }),
+    react(),
+  ],
+});
+```
+```typescript jsx
+const AppMobile: FC = (props) => {
+  // some mobile logic
+
+  return <App {...props} />;
+}
+
+/**
+ * src/mobile.tsx
+ */
+void entryClient(AppMobile, routes, {});
+```
+
 
 ## Bugs and feature requests
 
