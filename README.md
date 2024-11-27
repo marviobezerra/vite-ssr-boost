@@ -15,6 +15,7 @@
 - Very easy to migrate, very easy to use.
 - All the power of [vite](https://vitejs.dev/)⚡
 - All the power of [react-router](https://reactrouter.com/)🛣
+- Easy-peasy develop for [Capacitor](https://capacitorjs.com/)
 
 <p align="center">
   <img src="https://sonarcloud.io/api/project_badges/measure?project=vite-ssr-boost&metric=reliability_rating" alt="reliability">
