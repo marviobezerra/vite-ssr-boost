@@ -60,6 +60,7 @@ export interface IEntryServerOptions<TAppProps = Record<string, any>> {
   loggerProd?: IPrepareRenderOut['loggerProd'];
   loggerDev?: IPrepareRenderOut['loggerDev'];
   middlewares?: IPrepareRenderOut['middlewares'];
+  staticHandlerOpts?: Parameters<typeof createStaticHandler>[1];
 }
 
 /**
@@ -68,9 +69,9 @@ export interface IEntryServerOptions<TAppProps = Record<string, any>> {
 function entry<TAppProps>(
   App: TApp<TAppProps>,
   routes: TRouteObject[],
-  { init, ...rest }: IEntryServerOptions<TAppProps> = {},
+  { init, staticHandlerOpts, ...rest }: IEntryServerOptions<TAppProps> = {},
 ): IPrepareRenderOut<TAppProps> {
-  const handler = createStaticHandler(routes as RouteObject[]);
+  const handler = createStaticHandler(routes as RouteObject[], staticHandlerOpts);
 
   return {
     render: render.bind(null, { handler, App } as IRenderParams<TAppProps>) as TRender,
