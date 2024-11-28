@@ -107,7 +107,11 @@ async function render(
   const { isStream = true } = (await onRouterReady?.({ context })) ?? {};
 
   context.isStream = isStream;
-  context.serverContext = { response: null, isServer: true };
+  context.serverContext = {
+    response: null,
+    isServer: true,
+    basename: context.routerContext?.basename,
+  };
 
   const router = createStaticRouter(handler.dataRoutes, context.routerContext);
   const write = res.write.bind(res) as ExpressResponse['write'];

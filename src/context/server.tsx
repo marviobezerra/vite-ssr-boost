@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 export interface IServerContext {
   response: Response | null;
   isServer: boolean;
+  basename?: string;
 }
 
 const initState = {
@@ -16,8 +17,8 @@ const initState = {
  */
 const ServerContext = React.createContext<IServerContext>(initState);
 
-export interface IServerProvider {
-  context: Record<string, any>;
+interface IServerProvider {
+  context: IServerContext;
 }
 
 /**
@@ -25,7 +26,7 @@ export interface IServerProvider {
  * @constructor
  */
 const ServerProvider: FC<PropsWithChildren<IServerProvider>> = ({ children, context }) => (
-  <ServerContext.Provider value={context as IServerContext} children={children} />
+  <ServerContext.Provider value={context} children={children} />
 );
 
 const useServerContext = (): IServerContext => useContext(ServerContext);

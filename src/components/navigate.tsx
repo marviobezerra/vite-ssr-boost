@@ -22,8 +22,11 @@ const Navigate: FC<TProps> = ({ to, status = 301, ...rest }) => {
   }
 
   if (context) {
+    const { basename } = context;
     const location =
-      typeof to === 'string' ? to : [to.pathname, to.search, to.hash].filter(Boolean).join('');
+      typeof to === 'string'
+        ? [basename, to].filter(Boolean).join('')
+        : [basename, to.pathname, to.search, to.hash].filter(Boolean).join('');
 
     context.response = new Response('', { status, headers: new Headers({ Location: location }) });
   }
