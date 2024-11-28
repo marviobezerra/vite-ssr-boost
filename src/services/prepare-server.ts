@@ -1,7 +1,7 @@
 import fs from 'fs';
+import path from 'node:path';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
-import path from 'path';
 import chalk from 'chalk';
 import type { Request } from 'express';
 import type { TRouteObject } from '@interfaces/route-object';
@@ -173,6 +173,10 @@ class PrepareServer {
     let modifiedHtml = this.html;
 
     if (!isProd) {
+      const clientFileEntry = path.posix.normalize(
+        `${this.config.getVite()?.config.base}/${clientFile}`,
+      );
+
       // Apply Vite HTML transforms. This injects the Vite HMR client,
       // and also applies HTML transforms from Vite plugins, e.g. global
       // preambles from @vitejs/plugin-react
@@ -182,7 +186,7 @@ class PrepareServer {
         // remove 'async' attribute from app entrypoint for development
         // it might cause problems with preambles from @vitejs/plugin-react
         .replace(
-          new RegExp(`<script[^>]*?\\bsrc=["']/?${clientFile}["'][^>]*?\\sasync\\b`, 'g'),
+          new RegExp(`<script[^>]*?\\bsrc=["']/?${clientFileEntry}["'][^>]*?\\sasync\\b`, 'g'),
           (match) => match.replace(/\sasync\b/, ''),
         );
     }
