@@ -334,7 +334,7 @@ const routes: RouteObject[] = [
 ```
 ## Use Cases
 
-### Change basename
+### Change `basename`
 ```typescript jsx
 /**
  * Configure client
@@ -355,6 +355,29 @@ export default entryServer(App, routes, {
   },
 });
 ```
+
+### Change `base` for static assets
+```typescript
+// https://vitejs.dev/config/
+export default defineConfig({
+  base: '/static',
+});
+```
+
+```typescript jsx
+/**
+ * Configure server
+ * NOTE: 'basename' should be equal to 'base' from vite config 
+ */
+export default entryServer(App, routes, {
+  middlewares: {
+    expressStatic: {
+      basename: '/static',
+    },
+  },
+});
+```
+
 
 ### [Capacitor](https://capacitorjs.com/) additional endpoint
 ```typescript
