@@ -214,6 +214,7 @@ class Build {
     await SsrManifest.get(serverConfig, {
       buildDir: this.viteConfig.build.outDir,
       viteAliases: this.viteConfig.resolve.alias,
+      basename: this.viteConfig.base,
     }).buildRoutesManifest(isNodeParsing);
 
     if (isNodeParsing) {

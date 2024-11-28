@@ -16,6 +16,7 @@ import ServerConfig from '@services/server-config';
 interface ISsrManifestParams {
   buildDir?: string;
   viteAliases?: Alias[];
+  basename?: string;
 }
 
 interface IManifest {
@@ -93,6 +94,11 @@ class SsrManifest {
   protected readonly viteAliases?: Alias[];
 
   /**
+   * Vite base
+   */
+  protected readonly basename?: string;
+
+  /**
    * Loaded assets manifest file
    */
   protected routesAssets: Record<string, IAsset[]> | null = null;
@@ -100,12 +106,16 @@ class SsrManifest {
   /**
    * @constructor
    */
-  protected constructor(config: ServerConfig, { buildDir, viteAliases }: ISsrManifestParams = {}) {
+  protected constructor(
+    config: ServerConfig,
+    { buildDir, viteAliases, basename }: ISsrManifestParams = {},
+  ) {
     this.config = config;
     this.root = config.getParams().root;
     this.buildDir = buildDir;
     this.viteAliases = viteAliases ?? config.getVite()?.config?.resolve.alias;
     this.pathNormalize = new PathNormalize(config, viteAliases);
+    this.basename = basename;
   }
 
   /**
@@ -263,7 +273,7 @@ class SsrManifest {
           // keep only js,css,image,fonts files
           if (type) {
             res[asset] = {
-              url: `/${asset}`,
+              url: path.posix.normalize(`${this.basename}/${asset}`),
               weight: isEntry ? 1.9 : this.getAssetWeight(asset),
               type,
               isNested,

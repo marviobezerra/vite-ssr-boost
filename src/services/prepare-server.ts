@@ -217,6 +217,7 @@ class PrepareServer {
         expressStatic !== false
           ? {
               ...(expressStatic ?? {}),
+              basename: expressStatic?.basename ?? '/',
             }
           : false,
     };

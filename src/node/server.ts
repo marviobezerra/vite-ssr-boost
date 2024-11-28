@@ -79,9 +79,12 @@ async function createServer(config: ServerConfig): Promise<ICreateServerOut> {
     }
 
     if (expressStatic) {
+      const { basename, ...expressStaticOpts } = expressStatic;
+
       app.use(
+        basename!,
         express.static(path.resolve(`${root}/${publicDir}`), {
-          ...expressStatic,
+          ...expressStaticOpts,
           index: isSPA ? undefined : false,
         }),
       );

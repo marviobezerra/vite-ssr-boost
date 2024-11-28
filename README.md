@@ -195,10 +195,10 @@ export default entryServer(App, routes, {
     expressStatic: {},
   },
   /**
-   * (optional). Configure static handler options
+   * (optional). Configure router static handler options
    * @see createStaticHandler second arg
    */
-  staticHandlerOpts: {},
+  routerOptions: {},
 });
 ```
 
@@ -350,7 +350,7 @@ void entryClient(App, routes, {
  * Configure server
  */
 export default entryServer(App, routes, {
-  staticHandlerOpts: {
+  routerOptions: {
     basename: '/custom',
   },
 });

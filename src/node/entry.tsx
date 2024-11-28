@@ -42,7 +42,8 @@ export interface IPrepareRenderOut<TAppProps = Record<string, any>> {
   loggerDev?: Logger;
   middlewares?: {
     compression?: CompressionOptions | false;
-    expressStatic?: ServeStaticOptions | false;
+    // basename should be same as vite 'base' config
+    expressStatic?: (ServeStaticOptions & { basename?: string }) | false;
   };
 }
 
@@ -60,7 +61,7 @@ export interface IEntryServerOptions<TAppProps = Record<string, any>> {
   loggerProd?: IPrepareRenderOut['loggerProd'];
   loggerDev?: IPrepareRenderOut['loggerDev'];
   middlewares?: IPrepareRenderOut['middlewares'];
-  staticHandlerOpts?: Parameters<typeof createStaticHandler>[1];
+  routerOptions?: Parameters<typeof createStaticHandler>[1];
 }
 
 /**
@@ -69,9 +70,9 @@ export interface IEntryServerOptions<TAppProps = Record<string, any>> {
 function entry<TAppProps>(
   App: TApp<TAppProps>,
   routes: TRouteObject[],
-  { init, staticHandlerOpts, ...rest }: IEntryServerOptions<TAppProps> = {},
+  { init, routerOptions, ...rest }: IEntryServerOptions<TAppProps> = {},
 ): IPrepareRenderOut<TAppProps> {
-  const handler = createStaticHandler(routes as RouteObject[], staticHandlerOpts);
+  const handler = createStaticHandler(routes as RouteObject[], routerOptions);
 
   return {
     render: render.bind(null, { handler, App } as IRenderParams<TAppProps>) as TRender,
