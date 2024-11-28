@@ -164,7 +164,7 @@ class PrepareServer {
    * Load and return html shell
    */
   public async loadHtml(req: Request): Promise<[string, string]> {
-    const { isProd, root, indexFile } = this.config.getParams();
+    const { isProd, root, indexFile, clientFile } = this.config.getParams();
 
     if (!this.html || !isProd) {
       this.html = fs.readFileSync(path.resolve(`${root}/${indexFile}`), 'utf-8');
@@ -176,9 +176,15 @@ class PrepareServer {
       // Apply Vite HTML transforms. This injects the Vite HMR client,
       // and also applies HTML transforms from Vite plugins, e.g. global
       // preambles from @vitejs/plugin-react
-      modifiedHtml = await this.config
-        .getVite()!
-        .transformIndexHtml(req.originalUrl, this.html, indexFile);
+      modifiedHtml = (
+        await this.config.getVite()!.transformIndexHtml(req.originalUrl, this.html, indexFile)
+      )
+        // remove 'async' attribute from app entrypoint for development
+        // it might cause problems with preambles from @vitejs/plugin-react
+        .replace(
+          new RegExp(`<script[^>]*?\\bsrc=["']/?${clientFile}["'][^>]*?\\sasync\\b`, 'g'),
+          (match) => match.replace(/\sasync\b/, ''),
+        );
     }
 
     return modifiedHtml.split('<!--ssr-outlet-->') as [string, string];
